@@ -8,12 +8,14 @@ import useSWR, { mutate } from 'swr';
 import useInterval from 'use-interval';
 
 const Expenses: React.FC = () => {
+    const [unauthorized, setUnauthorized] = useState<boolean>();
+
     const getExpenses = async () => {
         try {
             const response = await ExpenseService.getExpenses();
             if (!response.ok) {
                 if (response.status === 401) {
-                    throw new Error('You are not authorized to view this page.');
+                    setUnauthorized(true);
                 } else {
                     throw new Error(response.statusText);
                 }
@@ -40,15 +42,21 @@ const Expenses: React.FC = () => {
                 <title>Expenses</title>
             </Head>
             <Header />
-            <main className="d-flex flex-column justify-content-center align-items-center">
-                <h1>Expenses</h1>
-                <section>
-                    <h2>Expenses overview</h2>
-                    {error && <div className="text-center text-red-800">{error.message}</div>}
-                    {isLoading && <p className="text-center text-green-800">Loading...</p>}
-                    {data && <ExpenseOverviewTable expenses={data} />}
-                </section>
-            </main>
+            {unauthorized ? (
+                <div className="text-center text-red-800">
+                    You are not authorized to view this page!
+                </div>
+            ) : (
+                <main className="d-flex flex-column justify-content-center align-items-center">
+                    <h1>Expenses</h1>
+                    <section>
+                        <h2>Expenses overview</h2>
+                        {error && <div className="text-center text-red-800">{error.message}</div>}
+                        {isLoading && <p className="text-center text-green-800">Loading...</p>}
+                        {data && <ExpenseOverviewTable expenses={data} />}
+                    </section>
+                </main>
+            )}
         </>
     );
 };

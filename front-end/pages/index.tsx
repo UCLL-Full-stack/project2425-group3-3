@@ -3,6 +3,7 @@ import Header from '../components/header';
 import Language from '../components/language/language';
 import { useTranslation } from 'next-i18next';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import styles from '@styles/Home.module.css'
 
 export default function Home() {
     const { t } = useTranslation();
@@ -21,6 +22,34 @@ export default function Home() {
                     <p className="text-lg text-gray-300 mb-4">{t('main.text1')}</p>
                     <p className="text-lg text-gray-300 mb-4">{t('main.text2')}</p>
                     <p className="text-lg text-gray-300">{t('main.text3')}</p>
+                </div>
+                <div className={styles.tableContainer}>
+                    <table className={styles.table}>
+                        <thead>
+                            <tr>
+                                <th>Username</th>
+                                <th>Password</th>
+                                <th>Role</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>admin_user</td>
+                                <td>password</td>
+                                <td>Admin</td>
+                            </tr>
+                            <tr>
+                                <td>bob_brown</td>
+                                <td>password</td>
+                                <td>Manager</td>
+                            </tr>
+                            <tr>
+                                <td>john_doe</td>
+                                <td>password</td>
+                                <td>Caretaker</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </main>
         </>

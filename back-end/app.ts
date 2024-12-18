@@ -26,14 +26,14 @@ app.listen(port || 3000, () => {
     console.log(`Back-end is running on port ${port}.`);
 });
 
-// app.use(
-//     expressjwt({
-//         secret: process.env.JWT_SECRET || 'default_secret',
-//         algorithms: ['HS256'],
-//     }).unless({
-//         path: ['/api-docs', /^\/api-docs\/.*/, '/users/login', '/users/signup', '/status', '/species', /^\/species\/.*/],
-//     })
-// );
+app.use(
+    expressjwt({
+        secret: process.env.JWT_SECRET || 'default_secret',
+        algorithms: ['HS256'],
+    }).unless({
+        path: ['/api-docs', /^\/api-docs\/.*/, '/users/login', '/users/signup', '/status', '/species', /^\/species\/.*/],
+    })
+);
 
 app.use('/animals', animalRouter);
 app.use('/expenses', expenseRouter);

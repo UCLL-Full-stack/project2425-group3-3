@@ -14,6 +14,7 @@ const Animals: React.FC = () => {
     const [selectedAnimal, setSelectedAnimal] = useState<Animal | null>(null);
     const [loggedInUser, setLoggedInUser] = useState<User | null>(null);
     const [isReady, setIsReady] = useState(false);
+    const [unauthorized, setUnauthorized] = useState<boolean>();
 
     useEffect(() => {
         const user = sessionStorage.getItem('loggedInUser');
@@ -27,10 +28,10 @@ const Animals: React.FC = () => {
         try {
             if (loggedInUser && loggedInUser.role === 'caretaker') {
                 const response = await AnimalService.getAnimalsByCaretaker(loggedInUser.username);
-    
+
                 if (!response.ok) {
                     if (response.status === 401) {
-                        throw new Error('You are not authorized to view this page.');
+                        setUnauthorized(true);
                     } else {
                         throw new Error(response.statusText);
                     }
@@ -38,15 +39,15 @@ const Animals: React.FC = () => {
                 return await response.json();
             } else {
                 const response = await AnimalService.getAnimals();
-    
+
                 if (!response.ok) {
                     if (response.status === 401) {
-                        throw new Error('You are not authorized to view this page.');
+                        setUnauthorized(true);
                     } else {
                         throw new Error(response.statusText);
                     }
                 }
-    
+
                 return await response.json();
             }
         } catch (error) {
@@ -54,7 +55,7 @@ const Animals: React.FC = () => {
         }
     };
 
-    const { data, isLoading, error } = useSWR( isReady ? 'animals': null, getAnimals);
+    const { data, isLoading, error } = useSWR(isReady ? 'animals' : null, getAnimals);
 
     useInterval(
         () => {
@@ -73,30 +74,35 @@ const Animals: React.FC = () => {
                 <title>Animals</title>
             </Head>
             <Header />
-            <main className="d-flex flex-column justify-content-center align-items-center">
-                <h1>Animals</h1>
-                <section>
-                    <h2>Animals overview</h2>
-                    {error && <div className="text-center text-red-800">{error.message}</div>}
-                    {isLoading && <p className="text-center text-green-800">Loading...</p>}
-                    {data && (
-                        <AnimalOverviewTable
-                            animals={data}
-                            selectAnimal={selectAnimal}
-                            DetailTableComponent={
-                                loggedInUser
-                                    ? loggedInUser.role === "caretaker"
-                                        ? AnimalDetailsTable
-                                        : loggedInUser.role === "manager"
-                                        ? AnimalExpenseTable
+            {unauthorized ? (
+                <div className="text-center text-red-800">
+                    You are not authorized to view this page!
+                </div>
+            ) : (
+                <main className="d-flex flex-column justify-content-center align-items-center">
+                    <h1>Animals</h1>
+                    <section>
+                        <h2>Animals overview</h2>
+                        {error && <div className="text-center text-red-800">{error.message}</div>}
+                        {isLoading && <p className="text-center text-green-800">Loading...</p>}
+                        {data && (
+                            <AnimalOverviewTable
+                                animals={data}
+                                selectAnimal={selectAnimal}
+                                DetailTableComponent={
+                                    loggedInUser
+                                        ? loggedInUser.role === 'caretaker'
+                                            ? AnimalDetailsTable
+                                            : loggedInUser.role === 'manager'
+                                            ? AnimalExpenseTable
+                                            : AnimalAdminTable
                                         : AnimalAdminTable
-                                    : AnimalAdminTable
-                            }
-                            
-                        />
-                    )}
-                </section>
-            </main>
+                                }
+                            />
+                        )}
+                    </section>
+                </main>
+            )}
         </>
     );
 };
