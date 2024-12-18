@@ -2,9 +2,11 @@ import Link from 'next/link';
 import styles from '../styles/Home.module.css';
 import { useEffect, useState } from 'react';
 import { User } from '@types';
+import Popup from './logout/popup';
 
 const Header: React.FC = () => {
     const [loggedInUser, setLoggedInUser] = useState<User | null>(null);
+    const [showLogoutPopup, setShowLogoutPopup] = useState(false);
 
     useEffect(() => {
         const user = sessionStorage.getItem('loggedInUser');
@@ -13,10 +15,20 @@ const Header: React.FC = () => {
         }
     }, []);
 
-    const handleClick = async () => {
+    const handleLogoutClick = async () => {
+        setShowLogoutPopup(true);
+    };
+
+    const handleCancelClick = () => {
+        setShowLogoutPopup(false);
+    };
+
+    const handleLogout = () => {
         sessionStorage.removeItem('loggedInUser');
         setLoggedInUser(null);
+        setShowLogoutPopup(false);
     };
+
     return (
         <header className={styles.navbar}>
             <nav className={styles.nav}>
@@ -48,10 +60,11 @@ const Header: React.FC = () => {
                     </Link>
                 )}
                 {loggedInUser && (
-                    <a href="/login" className={styles.navLink} onClick={handleClick}>
+                    <button className={styles.navLink} onClick={handleLogoutClick}>
                         Logout
-                    </a>
+                    </button>
                 )}
+                {showLogoutPopup && <Popup onCancel={handleCancelClick} onConfirm={handleLogout} />}
                 {loggedInUser && (
                     <div className="px-4 text-white nav-link fs-5">
                         Welcome, {loggedInUser.username}

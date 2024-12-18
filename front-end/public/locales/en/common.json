@@ -1,0 +1,11 @@
+
+{
+    "main" : {
+        "title" : "Welcome",
+        "h1" : "Welcome to the Animal Management System",
+        "text1" : "This system helps you manage animals, caretakers, and expenses efficiently.",
+        "text2" : "You can view and manage information about different species, track animal details, and monitor expenses.",
+        "text3" : "Use the navigation menu to explore the various features of the system."
+
+    }
+}

@@ -1,0 +1,10 @@
+{
+    "main" : {
+        "title" : "Welkom",
+        "h1" : "Welkom bij het managementsysteem voor dieren",
+        "text1" : "Dit systeem helpt je om dieren, verzorgers en uitgaven efficiënt te beheren.",
+        "text2" : "Je kunt informatie over verschillende diersoorten bekijken en beheren, gegevens over dieren bijhouden en uitgaven controleren.",
+        "text3" : "Gebruik het navigatiemenu om de verschillende functies van het systeem te verkennen."
+
+    }
+}
