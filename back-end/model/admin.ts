@@ -8,10 +8,7 @@ export class Admin {
     private user: User;
 
     constructor(admin: { id?: number; user: User; name: string }) {
-        if (!admin.name || admin.name.trim() === '') {
-            throw new Error('Name is required and cannot be empty.');
-        }
-        if (!admin.user) throw new Error('User is required.');
+        this.validate(admin);
 
         this.id = admin.id;
         this.name = admin.name;

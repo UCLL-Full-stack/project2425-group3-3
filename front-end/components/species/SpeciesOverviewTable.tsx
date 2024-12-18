@@ -1,34 +1,43 @@
 import React, { useEffect, useState } from 'react';
 import SpeciesService from '../../services/SpeciesService';
 import styles from '../../styles/Home.module.css';
+import useSWR from 'swr';
 
 type Species = {
     id: number;
     species: string;
 };
 
-type Props = {
-    species: Array<Species>;
-};
+const SpeciesOverviewTable: React.FC = () => {
+    const fetchSpeciesAndCounts = async () => {
+        const species: Species[] = await SpeciesService.getSpecies().then((res: Response) =>
+            res.json()
+        );
 
-const SpeciesOverviewTable: React.FC<Props> = ({ species }: Props) => {
-    const [animalCounts, setAnimalCounts] = useState<{ [key: number]: number }>({});
+        const countsPromises = species.map(async (s: Species) => {
+            const animals = await SpeciesService.getAnimalsBySpecies(s.id);
+            return { id: s.id, count: animals.length };
+        });
 
-    useEffect(() => {
-        const fetchAnimalCounts = async () => {
-            const counts: { [key: number]: number } = {};
-            for (const s of species) {
-                const animals = await SpeciesService.getAnimalsBySpecies(s.id);
-                counts[s.id] = animals.length;
-            }
-            setAnimalCounts(counts);
-        };
+        const counts = await Promise.all(countsPromises);
 
-        fetchAnimalCounts();
-    }, [species]);
+        const animalCounts: { [key: number]: number } = {};
+        counts.forEach(({ id, count }: { id: number; count: number }) => {
+            animalCounts[id] = count;
+        });
+
+        return { species, animalCounts };
+    };
+
+    const { data, error } = useSWR('speciesAndCounts', fetchSpeciesAndCounts);
+
+    const species = data?.species || [];
+    const animalCounts = data?.animalCounts || {};
 
     return (
         <div className={styles.tableContainer}>
+            {error && <div className="text-center text-red-800">{error.message}</div>}
+
             <table className={styles.table}>
                 <thead>
                     <tr>

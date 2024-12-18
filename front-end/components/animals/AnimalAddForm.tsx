@@ -4,6 +4,7 @@ import SpeciesService from '@services/SpeciesService';
 import UserService from '@services/UserService';
 import { Caretaker, Species, StatusMessage } from '@types';
 import classNames from 'classnames';
+import useSWR from 'swr';
 
 const AnimalAddForm: React.FC = () => {
     const [name, setName] = useState<string>('');
@@ -17,31 +18,27 @@ const AnimalAddForm: React.FC = () => {
     const [speciesList, setSpeciesList] = useState<Species[]>([]);
     const [caretakers, setCaretakers] = useState<Caretaker[]>([]);
 
-    // Fetch species and caretakers on component mount
-    useEffect(() => {
-        const fetchSpecies = async () => {
-            const response = await SpeciesService.getSpecies();
-            const data = await response.json();
-            if (response.status === 200) {
-                setSpeciesList(data);
-            } else {
-                setStatusMessages([{ message: `Error fetching species: ${response.statusText}`, type: 'error' }]);
-            }
-        };
+    const fetchAllData = async () => {
+        const [speciesResponse, caretakersResponse] = await Promise.all([
+            SpeciesService.getSpecies(),
+            UserService.getCaretakers(),
+        ]);
 
-        const fetchCaretakers = async () => {
-            const response = await UserService.getCaretakers();
-            const data = await response.json();
-            if (response.status === 200) {
-                setCaretakers(data);
-            } else {
-                setStatusMessages([{ message: `Error fetching caretakers: ${response.statusText}`, type: 'error' }]);
-            }
-        };
+        if (!speciesResponse.ok) {
+            throw new Error(`Failed to fetch species: ${speciesResponse.statusText}`);
+        }
 
-        fetchSpecies();
-        fetchCaretakers();
-    }, []);
+        if (!caretakersResponse.ok) {
+            throw new Error(`Failed to fetch caretakers: ${caretakersResponse.statusText}`);
+        }
+
+        const speciesData = await speciesResponse.json();
+        const caretakersData = await caretakersResponse.json();
+
+        return { species: speciesData, caretakers: caretakersData };
+    };
+
+    const { data, error } = useSWR('animalAddFormData', fetchAllData);
 
     const validate = () => {
         let result = true;
@@ -171,7 +168,7 @@ const AnimalAddForm: React.FC = () => {
                             className="text-black border border-gray-300 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-3"
                         >
                             <option value="">Select a species</option>
-                            {speciesList.map((species) => (
+                            {data?.species.map((species: Species) => (
                                 <option key={species.id} value={species.id}>
                                     {species.species}
                                 </option>
@@ -217,7 +214,7 @@ const AnimalAddForm: React.FC = () => {
                             className="text-black border border-gray-300 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-3"
                         >
                             <option value="">Select a caretaker</option>
-                            {caretakers.map((caretaker) => (
+                            {data?.caretakers.map((caretaker: Caretaker) => (
                                 <option key={caretaker.id} value={caretaker.id}>
                                     {caretaker.name}
                                 </option>
