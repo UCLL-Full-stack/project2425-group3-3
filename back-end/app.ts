@@ -10,8 +10,11 @@ import expenseRouter from './controller/expense.routes';
 import userRouter from './controller/user.routes';
 import speciesRouter from './controller/species.routes'
 import { expressjwt } from 'express-jwt';
+import helmet from 'helmet';
 
 const app = express();
+app.use(helmet());
+
 dotenv.config();
 const port = process.env.APP_PORT || 3000;
 
