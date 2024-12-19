@@ -9,6 +9,17 @@ type Species = {
 };
 
 const SpeciesOverviewTable: React.FC = () => {
+    const [unauthorized, setUnauthorized] = useState<boolean>();
+
+    useEffect(() => {
+        const user = sessionStorage.getItem('loggedInUser');
+        if (!user) {
+            setUnauthorized(true);
+        } else {
+            setUnauthorized(false);
+        }
+    }, []);
+
     const fetchSpeciesAndCounts = async () => {
         const species: Species[] = await SpeciesService.getSpecies().then((res: Response) =>
             res.json()
@@ -47,7 +58,16 @@ const SpeciesOverviewTable: React.FC = () => {
                 </thead>
                 <tbody>
                     {species.map((s) => (
-                        <tr key={s.id}>
+                        <tr
+                            key={s.id}
+                            onClick={() => {
+                                if (!unauthorized) {
+                                    window.location.href = `/species/${s.id}`;
+                                }
+                            }}
+                            role={unauthorized ? undefined : 'button'}
+                            className={unauthorized ? 'cursor-default' : 'cursor-pointer'}
+                        >
                             <td>{s.species}</td>
                             <td>{animalCounts[s.id] || 0}</td>
                         </tr>

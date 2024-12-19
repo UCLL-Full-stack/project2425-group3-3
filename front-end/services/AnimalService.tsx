@@ -18,36 +18,36 @@ const getAnimals = async () => {
     });
 };
 
-const getAnimalsByCaretaker = async (username: string) => {
-    try {
-        const token = getToken();
-        const response = await fetch(process.env.NEXT_PUBLIC_API_URL + `/animals/${username}`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                Authorization: `Bearer ${token}`,
-            },
-        });
-        console.log(response);
+// const getAnimalsByCaretaker = async (username: string) => {
+//     try {
+//         const token = getToken();
+//         const response = await fetch(process.env.NEXT_PUBLIC_API_URL + `/animals/${username}`, {
+//             method: 'GET',
+//             headers: {
+//                 'Content-Type': 'application/json',
+//                 Authorization: `Bearer ${token}`,
+//             },
+//         });
+//         console.log(response);
 
-        if (!response.ok) {
+//         if (!response.ok) {
 
-            throw new Error(`Failed to fetch animals. Status: ${response.status}`);
-        }
+//             throw new Error(`Failed to fetch animals. Status: ${response.status}`);
+//         }
 
-        // const animals = await response.json();
+//         // const animals = await response.json();
 
-        // if (!Array.isArray(animals)) {
-        //     console.error('Expected an array of animals, but got:', animals);
-        //     return []; // Return an empty array if the response is not an array
-        // }
-        // console.log(animals);
-        return response;
-    } catch (error) {
-        console.error('Error fetching animals:', error);
-        return [];
-    }
-};
+//         // if (!Array.isArray(animals)) {
+//         //     console.error('Expected an array of animals, but got:', animals);
+//         //     return []; // Return an empty array if the response is not an array
+//         // }
+//         // console.log(animals);
+//         return response;
+//     } catch (error) {
+//         console.error('Error fetching animals:', error);
+//         return [];
+//     }
+// };
 
 const deleteAnimal = async (id: string) => {
     try {
@@ -109,7 +109,7 @@ const createAnimal = async (animal: { name: string; age: number; speciesId: numb
 
 const AnimalService = {
     getAnimals,
-    getAnimalsByCaretaker,
+    // getAnimalsByCaretaker,
     deleteAnimal,
     putNewCaretaker,
     createAnimal,

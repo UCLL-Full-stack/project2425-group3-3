@@ -20,56 +20,63 @@
  *           type: number
  *           format: int32
  *           description: Animal's age.
- *         species:
- *           type: string
- *           description: Animal's species.
+ *         speciesId:
+ *           type: number
+ *           description: ID of the species.
  *         favouriteFood:
  *           type: string
  *           description: Animal's favourite food.
  *         favouriteToy:
  *           type: string
  *           description: Animal's favourite toy.
- *         costPerMonth:
+ *         firstExpense:
+ *           type: number
+ *           format: int64
+ *           description: ID of the first expense.
+ *         caretakerId:
+ *           type: number
+ *           format: int64
+ *           description: ID of the caretaker.
+ *     AnimalInput:
+ *       type: object
+ *       required:
+ *         - name
+ *         - age
+ *         - speciesId
+ *         - favouriteFood
+ *         - favouriteToy
+ *         - firstExpense
+ *         - caretakerId
+ *       properties:
+ *         name:
+ *           type: string
+ *           description: Animal's name.
+ *         age:
  *           type: number
  *           format: int32
- *           description: Cost per month to take care of the animal.
- *         costPerMonthPerSpecies:
+ *           description: Animal's age.
+ *         speciesId:
  *           type: number
- *           format: int32
- *           description: Cost per month per species to take care of the animal.
- *         caretakers:
- *           type: array
- *           items:
- *             type: object
- *             properties:
- *               id:
- *                 type: number
- *                 format: int64
- *                 description: Caretaker's id.
- *               user:
- *                 type: object
- *                 properties:
- *                   id:
- *                     type: number
- *                     format: int64
- *                   username:
- *                     type: string
- *                     description: Caretaker's username.
- *                   password:
- *                     type: string
- *                     description: Caretaker's password.
- *                   role:
- *                     type: string
- *                     description: Caretaker's role.
- *               name:
- *                 type: string
- *                 description: Caretaker's name.
+ *           description: ID of the species.
+ *         favouriteFood:
+ *           type: string
+ *           description: Animal's favourite food.
+ *         favouriteToy:
+ *           type: string
+ *           description: Animal's favourite toy.
+ *         firstExpense:
+ *           type: number
+ *           format: int64
+ *           description: ID of the first expense.
+ *         caretakerId:
+ *           type: number
+ *           format: int64
+ *           description: ID of the caretaker.
  */
 
 import express, { NextFunction, Request, Response } from 'express';
 import animalService from '../service/animal.service';
-import { AnimalInput } from '../types';
-
+import { AnimalInput, Role } from '../types';
 
 const animalRouter = express.Router();
 
@@ -77,75 +84,86 @@ const animalRouter = express.Router();
  * @swagger
  * /animals:
  *   get:
+ *     security:
+ *       - bearerAuth: []
  *     summary: Get a list of all animals.
  *     responses:
- *      200:
- *          description: A JSON array containing animal objects.
- *          content:
- *              application/json:
- *                  schema:
- *                      type: array
- *                      items:
- *                          $ref: '#/components/schemas/Animal'
+ *       200:
+ *         description: A JSON array containing animal objects.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Animal'
  */
-
 animalRouter.get('/', async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const animals = await animalService.getAllAnimals();
+        const request = req as Request & { auth: { username: string; role: Role }};
+        const { username, role } = request.auth;
+        const animals = await animalService.getAllAnimals({ username, role });
         res.status(200).json(animals);
     } catch (error) {
         next(error);
     }
 });
 
-/**
- * @swagger
- * /animals/{caretaker_username}:
- *   get:
- *     summary: animals by caretaker
- *     description: get a list of animals by caretaker username
- *     parameters:
- *       - name: parameterName
- *         in: query
- *         required: true
- *         description: caretaker username
- *         schema:
- *           type: string
- *     responses:
- *       '200':
- *         description: Success response description
- *         content:
- *           application/json:
- *             schema:
- *               type: object
- */
-animalRouter.get('/:caretaker_username', async (req: Request, res: Response, next: NextFunction) => {
-    try {
-        const username = req.params.caretaker_username;
-        const listOfAnimals = await animalService.getAnimalsByCaretaker({ username });
-        res.status(200).json(listOfAnimals);
-    } catch (error) {
-        next(error);
-    }
-});
+// /**
+//  * @swagger
+//  * /animals/{caretaker_username}:
+//  *   get:
+//  *     security:
+//  *       - bearerAuth: []
+//  *     summary: Get animals by caretaker username.
+//  *     description: Retrieve a list of animals associated with a caretaker's username.
+//  *     parameters:
+//  *       - name: caretaker_username
+//  *         in: path
+//  *         required: true
+//  *         description: Caretaker's username.
+//  *         schema:
+//  *           type: string
+//  *     responses:
+//  *       200:
+//  *         description: A list of animals for the specified caretaker.
+//  *         content:
+//  *           application/json:
+//  *             schema:
+//  *               type: array
+//  *               items:
+//  *                 $ref: '#/components/schemas/Animal'
+//  *       404:
+//  *         description: Caretaker not found.
+//  */
+// animalRouter.get('/:caretaker_username', async (req: Request, res: Response, next: NextFunction) => {
+//     try {
+//         const username = req.params.caretaker_username;
+//         const listOfAnimals = await animalService.getAnimalsByCaretaker({ username });
+//         res.status(200).json(listOfAnimals);
+//     } catch (error) {
+//         next(error);
+//     }
+// });
 
 /**
  * @swagger
  * /animals/{id}:
  *   delete:
+ *     security:
+ *       - bearerAuth: []
  *     summary: Delete an animal by ID.
  *     parameters:
  *       - name: id
  *         in: path
  *         required: true
- *         description: ID of the animal to delete
+ *         description: ID of the animal to delete.
  *         schema:
  *           type: number
  *     responses:
  *       200:
- *         description: Animal deleted successfully
+ *         description: Animal deleted successfully.
  *       404:
- *         description: Animal not found
+ *         description: Animal not found.
  */
 animalRouter.delete('/:id', async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -159,27 +177,29 @@ animalRouter.delete('/:id', async (req: Request, res: Response, next: NextFuncti
 
 /**
  * @swagger
- * /animals/{id}/caretaker:
+ * /animals/{id}/{caretakerId}:
  *   put:
+ *     security:
+ *       - bearerAuth: []
  *     summary: Update the caretaker of an animal by ID.
  *     parameters:
  *       - name: id
  *         in: path
  *         required: true
- *         description: ID of the animal to update
+ *         description: ID of the animal to update.
  *         schema:
  *           type: number
  *       - name: caretakerId
- *         in: query
+ *         in: path
  *         required: true
- *         description: ID of the new caretaker
+ *         description: ID of the new caretaker.
  *         schema:
  *           type: number
  *     responses:
  *       200:
- *         description: Caretaker updated successfully
+ *         description: Caretaker updated successfully.
  *       404:
- *         description: Animal or caretaker not found
+ *         description: Animal or caretaker not found.
  */
 animalRouter.put('/:id/:caretakerId', async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -196,24 +216,26 @@ animalRouter.put('/:id/:caretakerId', async (req: Request, res: Response, next: 
  * @swagger
  * /animals:
  *   post:
+ *     security:
+ *       - bearerAuth: []
  *     summary: Create a new animal.
  *     requestBody:
  *       required: true
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/Animal'
+ *             $ref: '#/components/schemas/AnimalInput'
  *     responses:
  *       201:
- *         description: Animal created successfully
+ *         description: Animal created successfully.
  *       400:
- *         description: Invalid input
+ *         description: Invalid input.
  */
 animalRouter.post('/', async (req: Request, res: Response, next: NextFunction) => {
     try {
         const newAnimal = <AnimalInput>req.body;
         const createdAnimal = await animalService.createAnimal(newAnimal);
-        res.status(200).json(createdAnimal);
+        res.status(201).json(createdAnimal);
     } catch (error) {
         next(error);
     }

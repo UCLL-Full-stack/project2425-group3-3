@@ -1,6 +1,6 @@
-import { Caretaker } from "../model/caretaker";
-import { Expense } from "../model/expense";
-import { Species } from "../model/species";
+import { Caretaker } from '../model/caretaker';
+import { Expense } from '../model/expense';
+import { Species } from '../model/species';
 
 type Role = 'admin' | 'caretaker' | 'manager';
 
@@ -9,6 +9,17 @@ interface UserInput {
     username: string;
     password: string;
     role: Role;
+}
+
+interface SpeciesInput {
+    id?: number;
+    species: string;
+}
+
+interface ExpenseInput {
+    id?: number;
+    totalCost: number;
+    month: string;
 }
 
 interface AnimalInput {
@@ -40,4 +51,13 @@ type AuthenticationResponse = {
     role: string;
 };
 
-export { Role, UserInput, AnimalInput, CaretakerInput, ManagerInput, AuthenticationResponse };
+export {
+    Role,
+    UserInput,
+    SpeciesInput,
+    ExpenseInput,
+    AnimalInput,
+    CaretakerInput,
+    ManagerInput,
+    AuthenticationResponse,
+};

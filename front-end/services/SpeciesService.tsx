@@ -15,18 +15,14 @@ const getAnimalsBySpecies = async (id: number) => {
                 'Content-Type': 'application/json',
             },
         });
-
         if (!response.ok) {
-            throw new Error(`Failed to fetch animals. Status: ${response.status}`);
+            throw new Error('Failed to fetch animals');
         }
-
         const animals = await response.json();
-
         if (!Array.isArray(animals)) {
             console.error('Expected an array of animals, but got:', animals);
             return []; // Return an empty array if the response is not an array
         }
-
         return animals;
     } catch (error) {
         console.error('Error fetching animals:', error);

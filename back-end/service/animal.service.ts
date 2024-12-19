@@ -1,37 +1,41 @@
+import { UnauthorizedError } from 'express-jwt';
 import { Animal } from '../model/animal';
 import { Expense } from '../model/expense';
 import animalDb from '../repository/animal.db';
 import expenseDb from '../repository/expense.db';
-import { AnimalInput } from '../types';
+import { AnimalInput, Role } from '../types';
 
-const getAllAnimals = async (): Promise<Animal[]> => {
-    try {
-        const animals = await animalDb.getAllAnimals();
-
-        if (!animals || animals.length === 0) {
-            throw new Error('No animals found.');
-        }
-
-        return animals;
-    } catch (error) {
-        console.error('Error fetching animals:', error);
-        throw new Error('Failed to retrieve animals.');
+const getAllAnimals = async ({
+    username,
+    role,
+}: {
+    username: string;
+    role: Role;
+}): Promise<Animal[]> => {
+    if (role === 'caretaker') {
+        return animalDb.getAnimalsByCaretaker({ username });
+    } else if (role === 'admin' || role === 'manager') {
+        return animalDb.getAllAnimals();
+    } else {
+        throw new UnauthorizedError('credentials_required', {
+            message: 'You are not authorized to access this resource.',
+        });
     }
 };
 
-const getAnimalsByCaretaker = async ({ username }: { username: string }) => {
-    try {
-        const animals = await animalDb.getAnimalsByCaretaker({ username });
+// const getAnimalsByCaretaker = async ({ username }: { username: string }) => {
+//     try {
+//         const animals = await animalDb.getAnimalsByCaretaker({ username });
 
-        if (!animals || animals.length === 0) {
-            throw new Error('No animals for this caretaker found.');
-        }
-        return animals;
-    } catch (error) {
-        console.error('Error fetching animals from this caretaker:', error);
-        throw new Error('Failed to retrieve animals from this caretaker.');
-    }
-};
+//         if (!animals || animals.length === 0) {
+//             throw new Error('No animals for this caretaker found.');
+//         }
+//         return animals;
+//     } catch (error) {
+//         console.error('Error fetching animals from this caretaker:', error);
+//         throw new Error('Failed to retrieve animals from this caretaker.');
+//     }
+// };
 
 const deleteAnimal = async ({ id }: { id: number }) => {
     try {
@@ -67,14 +71,22 @@ const createAnimal = async ({
     caretakerId,
 }: AnimalInput): Promise<Animal> => {
     const expense = await expenseDb.createExpense(firstExpense);
-    const createdAnimal = await animalDb.createAnimal(name, age, speciesId, favouriteFood, favouriteToy, caretakerId, expense);
+    const createdAnimal = await animalDb.createAnimal(
+        name,
+        age,
+        speciesId,
+        favouriteFood,
+        favouriteToy,
+        caretakerId,
+        expense
+    );
 
     return createdAnimal;
 };
 
 export default {
     getAllAnimals,
-    getAnimalsByCaretaker,
+    // getAnimalsByCaretaker,
     deleteAnimal,
     putNewCaretaker,
     createAnimal,

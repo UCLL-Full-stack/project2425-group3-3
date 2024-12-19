@@ -16,6 +16,7 @@
  *         totalCost:
  *           type: number
  *           format: int32
+ *           description: Total cost of the expense.
  *         month:
  *           type: string
  *           description: Expense's month in the format "MM-YYYY".
@@ -30,7 +31,9 @@ const expenseRouter = express.Router();
  * @swagger
  * /expenses:
  *   get:
- *     summary: Retrieve a list of all expenses
+ *     security:
+ *       - bearerAuth: []
+ *     summary: Retrieve a list of all expenses.
  *     description: Retrieve a list of all expenses.
  *     responses:
  *       200:
@@ -41,6 +44,8 @@ const expenseRouter = express.Router();
  *               type: array
  *               items:
  *                 $ref: '#/components/schemas/Expense'
+ *       401:
+ *         description: Unauthorized access.
  */
 expenseRouter.get('/', async (req: Request, res: Response, next: NextFunction) => {
     try {
