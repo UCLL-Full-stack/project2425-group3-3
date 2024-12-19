@@ -33,25 +33,4 @@ const getAnimalsFromSpecies = async ({ id }: { id: number }): Promise<Animal[]> 
     }
 };
 
-// const getAnimalsFromSpeciesAndCaretaker = async ({ id }: { id: number }): Promise<Animal[]> => {
-//     try {
-//         const AnimalPrisma = await database.animal.findMany({
-//             where: { species: { id } },
-//             include: {
-//                 species: true,
-//                 expenses: true,
-//                 caretaker: {
-//                     include: {
-//                         user: true
-//                     }
-//                 }
-//             },
-//         });
-//         return AnimalPrisma.map((AnimalPrisma) => Animal.from(AnimalPrisma))
-//     } catch (error) {
-//         console.error(error);
-//         throw new Error('Database error. See server log for details.')
-//     }
-// };
-
 export default { getAllSpecies, getAnimalsFromSpecies };

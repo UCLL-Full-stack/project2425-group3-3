@@ -108,43 +108,6 @@ animalRouter.get('/', async (req: Request, res: Response, next: NextFunction) =>
     }
 });
 
-// /**
-//  * @swagger
-//  * /animals/{caretaker_username}:
-//  *   get:
-//  *     security:
-//  *       - bearerAuth: []
-//  *     summary: Get animals by caretaker username.
-//  *     description: Retrieve a list of animals associated with a caretaker's username.
-//  *     parameters:
-//  *       - name: caretaker_username
-//  *         in: path
-//  *         required: true
-//  *         description: Caretaker's username.
-//  *         schema:
-//  *           type: string
-//  *     responses:
-//  *       200:
-//  *         description: A list of animals for the specified caretaker.
-//  *         content:
-//  *           application/json:
-//  *             schema:
-//  *               type: array
-//  *               items:
-//  *                 $ref: '#/components/schemas/Animal'
-//  *       404:
-//  *         description: Caretaker not found.
-//  */
-// animalRouter.get('/:caretaker_username', async (req: Request, res: Response, next: NextFunction) => {
-//     try {
-//         const username = req.params.caretaker_username;
-//         const listOfAnimals = await animalService.getAnimalsByCaretaker({ username });
-//         res.status(200).json(listOfAnimals);
-//     } catch (error) {
-//         next(error);
-//     }
-// });
-
 /**
  * @swagger
  * /animals/{id}:

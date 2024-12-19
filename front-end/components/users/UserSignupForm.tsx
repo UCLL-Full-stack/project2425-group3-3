@@ -44,7 +44,7 @@ const UserSignupForm: React.FC = () => {
 
         const response = await UserService.createUser(user);
         const data = await response.json();
-        if (response.status === 200) {
+        if (response.ok) {
             setStatusMessages([
                 { message: `User ${data.username} was successfully added!`, type: 'success' },
             ]);

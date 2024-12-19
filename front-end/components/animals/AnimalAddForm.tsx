@@ -96,7 +96,7 @@ const AnimalAddForm: React.FC = () => {
 
         const response = await AnimalService.createAnimal(animal);
         const data = await response.json();
-        if (response.status === 200) {
+        if (response.ok) {
             setStatusMessages([
                 { message: `Animal ${data.name} was successfully added!`, type: 'success' },
             ]);
