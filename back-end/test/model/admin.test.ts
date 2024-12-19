@@ -1,26 +1,21 @@
-import { Admin } from "../../model/admin";
-import { Expense } from "../../model/expense";
-import { User } from "../../model/user";
+import { Admin } from '../../model/admin';
+import { User } from '../../model/user';
 
-const user1 = new User({
-    username: 'user1',
-    password: 'password1',
-    role: 'admin'
+const validAdminUser  = new User({
+    id: 1,
+    username: 'admin_user',
+    password: 'securepassword',
+    role: 'admin',
 });
 
-
-const expense1 = new Expense({ 
-    totalCost: 1000,
-    month: '01-2021',
+test('given: valid values for admin, when: admin is created, then: admin is created with those values', () => {
+    const admin = new Admin({ id: 1, user: validAdminUser , name: 'Admin User' });
+    expect(admin.getId()).toBe(1);
+    expect(admin.getUser ()).toBe(validAdminUser );
+    expect(admin.getName()).toBe('Admin User');
 });
 
-test("given: valid values for Admin, when: Admin is created, then: Admin is created with those values", () => {
-    const admin = new Admin({
-        name: 'admin1',
-        user: user1,
-        expenses: [expense1]
-    });
-    expect(admin.getUser()).toEqual(user1);
-    expect(admin.getExpenses()).toEqual([expense1]);
+test('given: invalid name, when: admin is created, then: an error is thrown', () => {
+    const createAdmin = () => new Admin({ id: 2, user: validAdminUser , name: '' });
+    expect(createAdmin).toThrow('Name is required and cannot be empty.');
 });
-    
