@@ -3,10 +3,13 @@ import styles from '../styles/Home.module.css';
 import { useEffect, useState } from 'react';
 import { User } from '@types';
 import Popup from './logout/popup';
+import { useRouter } from 'next/router'
 
 const Header: React.FC = () => {
     const [loggedInUser, setLoggedInUser] = useState<User | null>(null);
     const [showLogoutPopup, setShowLogoutPopup] = useState(false);
+
+    const router = useRouter();
 
     useEffect(() => {
         const user = sessionStorage.getItem('loggedInUser');
@@ -27,6 +30,7 @@ const Header: React.FC = () => {
         sessionStorage.removeItem('loggedInUser');
         setLoggedInUser(null);
         setShowLogoutPopup(false);
+        router.push('/');        
     };
 
     return (

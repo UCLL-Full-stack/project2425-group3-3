@@ -26,30 +26,20 @@ const Animals: React.FC = () => {
 
     const getAnimals = async () => {
         try {
-            // if (loggedInUser && loggedInUser.role === 'caretaker') {
-            //     const response = await AnimalService.getAnimalsByCaretaker(loggedInUser.username);
-
-            //     if (!response.ok) {
-            //         if (response.status === 401) {
-            //             setUnauthorized(true);
-            //         } else {
-            //             throw new Error(response.statusText);
-            //         }
-            //     }
-            //     return await response.json();
-            // } else {
             const response = await AnimalService.getAnimals();
-
             if (!response.ok) {
                 if (response.status === 401) {
+                    console.log('unautho');
+
                     setUnauthorized(true);
                 } else {
                     throw new Error(response.statusText);
                 }
             }
-
-            return await response.json();
-            // }
+            else {
+                console.log('autho');
+                return await response.json();
+            }
         } catch (error) {
             return Promise.reject(error);
         }
