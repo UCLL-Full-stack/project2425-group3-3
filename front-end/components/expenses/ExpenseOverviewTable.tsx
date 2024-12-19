@@ -22,7 +22,7 @@ const ExpenseOverviewTable: React.FC<Props> = ({ expenses }: Props) => {
                 </thead>
                 <tbody>
                     {expenses.map((expense) => (
-                        <tr key={expense.month}>
+                        <tr key={expense.id}>
                             <td>{expense.month}</td>
                             <td>{expense.totalCost}</td>
                         </tr>
