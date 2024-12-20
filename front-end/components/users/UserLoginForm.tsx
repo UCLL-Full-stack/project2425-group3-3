@@ -97,7 +97,7 @@ const UserLoginForm: React.FC = () => {
                         type="text"
                         value={name}
                         onChange={(event) => setName(event.target.value)}
-                        className="border border-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                        className="text-black border border-gray-300 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5"
                     />
                     {nameError && <div className="text-red-800">{nameError}</div>}
                 </div>
@@ -110,7 +110,7 @@ const UserLoginForm: React.FC = () => {
                         type="password"
                         value={password}
                         onChange={(event) => setPassword(event.target.value)}
-                        className="border border-gray-300 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5"
+                        className="text-black border border-gray-300 text-sm rounded-lg focus:ring-green-500 focus:border-green-500 block w-full p-2.5"
                     />
                     {passwordError && <div className="text-red-800">{passwordError}</div>}
                 </div>
