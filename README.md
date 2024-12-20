@@ -3,4 +3,4 @@
 
 The Animal Management System is a full-stack application designed to efficiently manage animals, caretakers, and expenses. This system allows users to view and manage information about different species, track animal details, and monitor expenses. 
 
-### \Mats Bultynck\ / \Luka Herroelen\
+### Mats Bultynck / Luka Herroelen
